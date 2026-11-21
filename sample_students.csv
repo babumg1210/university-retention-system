@@ -1,0 +1,201 @@
+student_id,name,department,enrollment_year,scholarship_status,attendance_pct,internal_marks,lms_logins
+STU1001,Allison Hill,Computer Science & Engineering,2021,No,78.3,63.7,36
+STU1002,Noah Rhodes,Business Administration,2021,Yes,86.9,61.0,50
+STU1003,Angie Henderson,Business Administration,2022,No,95.4,87.3,45
+STU1004,Daniel Wagner,Business Administration,2023,Yes,92.9,63.7,73
+STU1005,Cristian Santos,Computer Science & Engineering,2023,No,62.6,65.5,25
+STU1006,Connie Lawrence,Computer Science & Engineering,2024,Yes,89.8,91.9,71
+STU1007,Abigail Shaffer,Electrical & Electronics Engineering,2021,Yes,81.8,62.9,54
+STU1008,Gina Moore,Computer Science & Engineering,2024,Yes,49.1,56.9,14
+STU1009,Gabrielle Davis,Mechanical Engineering,2021,No,92.1,65.9,73
+STU1010,Ryan Munoz,Mechanical Engineering,2022,No,85.0,27.0,11
+STU1011,Monica Herrera,Mechanical Engineering,2024,Yes,97.2,91.5,65
+STU1012,Jamie Arnold,Electrical & Electronics Engineering,2024,No,46.1,24.4,4
+STU1013,Lisa Hensley,Mechanical Engineering,2024,No,80.2,95.9,90
+STU1014,Michele Williams,Business Administration,2021,No,73.8,25.5,31
+STU1015,Dylan Miller,Business Administration,2021,No,86.0,69.1,26
+STU1016,Brian Ramirez,Computer Science & Engineering,2023,No,81.9,65.7,25
+STU1017,Holly Wood,Mechanical Engineering,2022,No,89.7,90.3,89
+STU1018,Derek Zuniga,Electrical & Electronics Engineering,2022,No,97.4,93.2,25
+STU1019,Lisa Jackson,Mechanical Engineering,2024,Yes,60.8,38.0,5
+STU1020,Carla Gray,Electrical & Electronics Engineering,2021,Yes,76.9,86.3,33
+STU1021,Margaret Hawkins DDS,Electrical & Electronics Engineering,2022,No,35.8,30.7,10
+STU1022,Patty Perez,Business Administration,2022,No,83.4,37.7,22
+STU1023,Ethan Adams,Mechanical Engineering,2024,No,80.8,62.3,27
+STU1024,Tommy Walter,Electrical & Electronics Engineering,2022,Yes,39.8,49.6,9
+STU1025,Matthew Foster,Mechanical Engineering,2021,No,86.4,79.4,85
+STU1026,Judy Baker,Electrical & Electronics Engineering,2024,No,77.3,75.5,79
+STU1027,Justin Baker,Business Administration,2024,No,90.4,83.3,32
+STU1028,Stephanie Ross,Business Administration,2023,No,79.5,79.3,42
+STU1029,Zachary Hicks,Business Administration,2022,Yes,96.7,76.0,37
+STU1030,Anthony Rodriguez,Computer Science & Engineering,2021,No,59.7,22.0,8
+STU1031,Rebecca Henderson,Business Administration,2022,No,35.8,18.1,7
+STU1032,James Ferrell,Mechanical Engineering,2024,Yes,60.3,66.8,23
+STU1033,Tricia Valencia,Electrical & Electronics Engineering,2022,Yes,50.3,31.0,12
+STU1034,Nathan Maldonado,Mechanical Engineering,2021,Yes,96.6,79.1,32
+STU1035,Debra Davidson,Computer Science & Engineering,2022,Yes,95.3,74.5,56
+STU1036,Jeffrey Chavez,Computer Science & Engineering,2021,No,87.3,93.6,51
+STU1037,Sherri Baker,Mechanical Engineering,2022,Yes,90.2,76.5,34
+STU1038,Cassandra Gaines,Computer Science & Engineering,2024,No,77.3,79.4,89
+STU1039,Elizabeth Fowler,Mechanical Engineering,2022,No,86.8,30.1,15
+STU1040,Brittany Farmer,Business Administration,2023,No,52.9,18.2,9
+STU1041,Paula Moreno,Mechanical Engineering,2021,No,77.7,63.9,44
+STU1042,Fred Smith,Mechanical Engineering,2023,No,44.2,63.2,16
+STU1043,Sherry Decker,Business Administration,2023,No,72.7,31.3,18
+STU1044,Anthony Humphrey,Computer Science & Engineering,2021,No,98.0,65.8,81
+STU1045,Angelica Tucker,Business Administration,2021,Yes,54.2,21.6,1
+STU1046,Philip Cannon,Mechanical Engineering,2022,No,83.6,93.6,30
+STU1047,John Pierce,Mechanical Engineering,2022,No,48.8,61.4,21
+STU1048,Shane Henderson,Electrical & Electronics Engineering,2022,No,58.4,39.2,1
+STU1049,Joshua Blair,Electrical & Electronics Engineering,2023,No,90.7,86.5,56
+STU1050,Eric Carney,Mechanical Engineering,2022,No,95.5,90.9,53
+STU1051,Jessica Holmes,Electrical & Electronics Engineering,2024,No,86.7,26.9,31
+STU1052,Danny Morgan,Electrical & Electronics Engineering,2024,No,88.4,28.1,30
+STU1053,Crystal Robinson,Business Administration,2023,No,97.8,66.4,58
+STU1054,Mark Perez,Computer Science & Engineering,2021,No,93.5,75.7,90
+STU1055,Shannon Jones,Computer Science & Engineering,2024,No,76.0,75.7,50
+STU1056,Michael Lewis,Mechanical Engineering,2024,Yes,48.1,55.5,11
+STU1057,Timothy Duncan,Mechanical Engineering,2023,No,91.4,80.0,49
+STU1058,Richard Aguirre,Business Administration,2024,No,51.5,25.2,9
+STU1059,Brent Jordan,Computer Science & Engineering,2023,Yes,88.6,83.6,84
+STU1060,John Daniel,Business Administration,2024,No,93.7,94.6,46
+STU1061,Victoria Garcia,Computer Science & Engineering,2023,No,48.2,67.6,15
+STU1062,Gerald Hensley,Mechanical Engineering,2022,No,76.1,95.4,34
+STU1063,Connor West,Business Administration,2024,No,91.9,73.8,76
+STU1064,Donald Wright,Electrical & Electronics Engineering,2022,No,92.6,87.7,38
+STU1065,Jessica Callahan,Business Administration,2022,Yes,48.1,19.2,4
+STU1066,Amber Kidd,Computer Science & Engineering,2024,Yes,87.5,80.1,65
+STU1067,Tracy House,Business Administration,2024,No,96.1,86.8,85
+STU1068,Carol Tucker,Business Administration,2023,No,76.0,39.1,25
+STU1069,James Brown,Electrical & Electronics Engineering,2023,No,45.2,56.1,25
+STU1070,William Baker,Computer Science & Engineering,2022,Yes,78.6,67.7,78
+STU1071,Jordan Henderson,Business Administration,2023,No,79.9,75.1,27
+STU1072,Whitney Peters,Business Administration,2024,Yes,92.7,90.7,78
+STU1073,Brittney Phillips,Electrical & Electronics Engineering,2024,Yes,75.7,72.1,76
+STU1074,Lauren Daniels,Electrical & Electronics Engineering,2024,No,48.7,39.8,10
+STU1075,Amy Silva,Computer Science & Engineering,2021,No,85.8,61.8,73
+STU1076,Sarah Moore,Mechanical Engineering,2022,No,95.7,70.0,78
+STU1077,Angela Lopez,Mechanical Engineering,2021,No,39.6,70.8,15
+STU1078,Megan Young,Computer Science & Engineering,2021,No,37.0,18.5,3
+STU1079,Steve Sanchez,Electrical & Electronics Engineering,2022,No,97.3,76.7,57
+STU1080,Lisa Barnes,Mechanical Engineering,2022,No,55.1,36.7,3
+STU1081,Kelly Donovan,Mechanical Engineering,2021,No,50.2,39.8,7
+STU1082,Mike Allen,Business Administration,2022,Yes,57.1,50.4,17
+STU1083,Michael Evans,Computer Science & Engineering,2021,No,83.7,78.2,68
+STU1084,Paul Jones,Computer Science & Engineering,2024,No,97.6,82.9,83
+STU1085,Zachary Ferrell,Electrical & Electronics Engineering,2024,Yes,90.3,82.2,86
+STU1086,Daniel Baker,Business Administration,2024,No,82.6,68.8,36
+STU1087,Shirley Suarez,Mechanical Engineering,2024,Yes,89.3,73.6,28
+STU1088,Christopher Bass,Business Administration,2023,Yes,93.7,72.3,60
+STU1089,Lisa Archer,Computer Science & Engineering,2022,Yes,52.9,66.2,23
+STU1090,Aimee Montoya,Business Administration,2024,No,80.2,84.9,64
+STU1091,Matthew Mcmillan,Mechanical Engineering,2024,No,98.4,79.8,70
+STU1092,Brian Rodriguez,Business Administration,2023,No,92.0,71.4,48
+STU1093,Denise Jacobs,Electrical & Electronics Engineering,2022,No,88.9,87.4,61
+STU1094,Christina Walters,Computer Science & Engineering,2022,Yes,82.1,85.5,41
+STU1095,John Whitehead,Mechanical Engineering,2021,No,91.4,64.5,87
+STU1096,Anna Henderson,Computer Science & Engineering,2021,No,85.4,66.6,31
+STU1097,Aaron Wise,Mechanical Engineering,2024,Yes,86.6,80.8,31
+STU1098,Deborah Figueroa,Electrical & Electronics Engineering,2022,No,33.0,24.0,9
+STU1099,Jessica Smith,Business Administration,2022,No,96.3,70.7,79
+STU1100,Stephen Mckee,Mechanical Engineering,2021,No,66.9,53.0,14
+STU1101,Sandra Aguilar,Mechanical Engineering,2021,Yes,76.8,60.1,82
+STU1102,Cameron Parker,Business Administration,2023,Yes,81.6,90.9,34
+STU1103,Rebecca Valencia,Electrical & Electronics Engineering,2023,No,58.2,70.4,21
+STU1104,Christine Wright,Computer Science & Engineering,2022,No,58.9,19.7,3
+STU1105,Richard Henson,Mechanical Engineering,2023,No,82.1,74.5,59
+STU1106,Marc Moore,Business Administration,2024,Yes,85.2,71.6,57
+STU1107,Sharon Cherry,Computer Science & Engineering,2021,Yes,64.2,62.1,8
+STU1108,Sierra Johnson,Mechanical Engineering,2021,No,87.2,75.9,60
+STU1109,Evelyn Galvan,Electrical & Electronics Engineering,2024,No,77.1,72.5,67
+STU1110,Sharon Cochran,Mechanical Engineering,2021,No,91.3,70.4,76
+STU1111,Richard Rodriguez,Computer Science & Engineering,2024,Yes,77.7,87.8,90
+STU1112,Shannon Walker,Computer Science & Engineering,2024,No,83.5,87.2,81
+STU1113,Julia Torres,Computer Science & Engineering,2022,Yes,81.8,91.7,87
+STU1114,Crystal Johnson,Computer Science & Engineering,2021,No,45.3,51.8,25
+STU1115,Garrett Lin,Computer Science & Engineering,2024,Yes,62.0,29.1,2
+STU1116,Diana May,Electrical & Electronics Engineering,2024,No,91.6,75.0,86
+STU1117,William Herrera,Business Administration,2022,No,79.5,81.6,42
+STU1118,Ashley Waller,Computer Science & Engineering,2023,No,77.1,39.3,18
+STU1119,Victor Baker,Computer Science & Engineering,2023,No,81.4,36.5,14
+STU1120,Jeffrey Chandler,Business Administration,2024,No,87.8,76.4,66
+STU1121,Larry Dixon,Electrical & Electronics Engineering,2022,No,93.2,61.6,85
+STU1122,Kenneth Scott,Business Administration,2024,No,82.7,25.3,11
+STU1123,April Frost,Electrical & Electronics Engineering,2023,No,78.9,33.6,24
+STU1124,Michelle Harmon,Computer Science & Engineering,2022,No,42.7,59.3,16
+STU1125,Helen Jones,Mechanical Engineering,2024,No,86.3,40.9,22
+STU1126,Erin Edwards,Mechanical Engineering,2024,No,76.6,82.7,61
+STU1127,Michelle Evans,Electrical & Electronics Engineering,2021,No,89.9,91.4,81
+STU1128,Jason Powell,Electrical & Electronics Engineering,2023,No,93.7,70.6,72
+STU1129,Cameron Fisher,Business Administration,2022,Yes,91.0,66.5,47
+STU1130,Megan Orr,Computer Science & Engineering,2024,No,96.5,65.2,84
+STU1131,Elizabeth Kelley,Mechanical Engineering,2024,Yes,93.9,92.4,45
+STU1132,Dustin Jordan,Computer Science & Engineering,2024,No,40.5,41.1,12
+STU1133,Mary Marshall,Mechanical Engineering,2024,No,84.0,77.4,55
+STU1134,Daniel Kennedy,Business Administration,2023,No,40.3,41.5,11
+STU1135,Rebecca Jackson,Business Administration,2023,Yes,85.0,43.4,29
+STU1136,Jose Schultz,Business Administration,2023,No,93.8,67.9,49
+STU1137,Robert Potter,Mechanical Engineering,2022,No,52.6,25.4,8
+STU1138,Courtney Gonzalez,Computer Science & Engineering,2023,No,81.9,86.9,47
+STU1139,David Alvarez,Electrical & Electronics Engineering,2022,No,77.6,33.0,18
+STU1140,Angel Perry,Electrical & Electronics Engineering,2023,No,63.9,25.1,6
+STU1141,Cheyenne Horton,Computer Science & Engineering,2024,No,97.7,91.0,75
+STU1142,David Douglas Jr.,Mechanical Engineering,2021,No,87.6,76.4,58
+STU1143,Patricia Rodriguez,Business Administration,2023,Yes,75.6,91.8,66
+STU1144,Christopher Rubio,Electrical & Electronics Engineering,2021,No,91.5,83.4,39
+STU1145,Amber Wright,Electrical & Electronics Engineering,2021,No,86.6,63.5,42
+STU1146,Joyce Solis,Business Administration,2024,No,54.4,31.0,10
+STU1147,Victoria Larson,Electrical & Electronics Engineering,2024,No,82.1,42.7,18
+STU1148,Stephanie Salazar,Computer Science & Engineering,2023,Yes,80.5,73.1,72
+STU1149,Kathy Rivas,Mechanical Engineering,2021,No,77.9,90.5,83
+STU1150,Stephanie Manning,Computer Science & Engineering,2022,No,75.5,88.3,56
+STU1151,David Wright,Electrical & Electronics Engineering,2022,Yes,74.7,26.8,17
+STU1152,Pamela Boyd,Mechanical Engineering,2022,No,81.5,95.4,41
+STU1153,Denise Jones,Mechanical Engineering,2022,Yes,73.4,29.9,35
+STU1154,Devon Flores,Electrical & Electronics Engineering,2023,Yes,78.0,75.2,39
+STU1155,Brenda Hall,Computer Science & Engineering,2024,No,89.0,76.3,53
+STU1156,Michelle Brown,Computer Science & Engineering,2023,No,32.1,29.5,7
+STU1157,Joshua Perry,Business Administration,2021,No,32.6,19.9,10
+STU1158,Jason Stein,Electrical & Electronics Engineering,2021,Yes,55.9,65.1,20
+STU1159,Melissa Gates,Mechanical Engineering,2024,No,93.6,64.1,52
+STU1160,Jamie Smith,Business Administration,2024,No,94.4,74.4,37
+STU1161,Paul Castaneda,Mechanical Engineering,2024,No,97.4,84.7,85
+STU1162,Jennifer Adkins,Computer Science & Engineering,2021,No,77.3,86.6,41
+STU1163,Lindsey Walker,Computer Science & Engineering,2023,No,95.5,93.9,79
+STU1164,Jeffrey Johnson,Computer Science & Engineering,2023,No,88.6,67.7,86
+STU1165,Michael Powell,Electrical & Electronics Engineering,2021,No,77.7,70.0,53
+STU1166,John Anderson,Business Administration,2021,No,59.2,48.7,16
+STU1167,Alyssa Long,Mechanical Engineering,2023,No,78.4,83.7,33
+STU1168,Alyssa Day,Electrical & Electronics Engineering,2021,Yes,83.8,76.3,45
+STU1169,Joel Williams,Mechanical Engineering,2023,No,81.2,23.9,11
+STU1170,Daniel Murphy,Electrical & Electronics Engineering,2022,No,76.9,76.0,79
+STU1171,Jamie Walton,Business Administration,2024,No,87.0,72.4,39
+STU1172,Darlene Miller,Mechanical Engineering,2024,No,80.2,95.4,32
+STU1173,Joshua Cooke,Computer Science & Engineering,2022,No,78.2,69.2,66
+STU1174,Matthew Harrington,Computer Science & Engineering,2021,No,78.0,79.2,54
+STU1175,Nicole Herring,Mechanical Engineering,2021,No,51.3,59.0,10
+STU1176,Alex Hernandez,Mechanical Engineering,2024,No,50.7,50.8,8
+STU1177,Michael Elliott,Mechanical Engineering,2022,No,63.4,70.1,10
+STU1178,Michael Wang,Business Administration,2021,Yes,87.3,74.2,64
+STU1179,Lawrence Adkins,Mechanical Engineering,2022,No,87.0,64.1,90
+STU1180,Robert Oconnell,Electrical & Electronics Engineering,2023,No,52.6,21.5,2
+STU1181,Alexander Collins,Electrical & Electronics Engineering,2023,Yes,61.2,63.7,13
+STU1182,Tina Sanders,Business Administration,2024,No,79.1,42.3,28
+STU1183,Angela Vaughn,Mechanical Engineering,2023,Yes,85.4,70.9,60
+STU1184,Ashley Barton,Computer Science & Engineering,2023,No,85.6,62.0,61
+STU1185,Lindsay Martinez,Computer Science & Engineering,2021,No,85.9,80.0,30
+STU1186,Dr. Hannah Patterson,Business Administration,2022,No,78.5,62.2,38
+STU1187,Jonathan Peterson,Mechanical Engineering,2021,No,80.8,75.8,81
+STU1188,Samantha Garcia,Electrical & Electronics Engineering,2023,No,84.6,72.2,31
+STU1189,Madison Poole,Mechanical Engineering,2021,No,84.1,69.1,44
+STU1190,Jessica Gross,Mechanical Engineering,2021,No,83.2,94.8,75
+STU1191,Debra Morton,Electrical & Electronics Engineering,2021,No,93.6,89.3,36
+STU1192,Karen Graham,Business Administration,2023,Yes,97.4,72.3,87
+STU1193,Debra Christian,Electrical & Electronics Engineering,2022,No,82.0,88.4,89
+STU1194,Angelica Keith,Computer Science & Engineering,2023,No,56.2,51.7,13
+STU1195,John Bishop,Electrical & Electronics Engineering,2024,Yes,91.9,94.9,61
+STU1196,Allen Rosales,Business Administration,2022,No,94.0,76.9,49
+STU1197,Daniel Salinas,Mechanical Engineering,2024,No,84.0,79.0,45
+STU1198,Spencer Haynes,Electrical & Electronics Engineering,2022,No,86.3,73.4,38
+STU1199,Adam Vaughan,Computer Science & Engineering,2023,Yes,85.6,78.5,80
+STU1200,Nathan Freeman,Computer Science & Engineering,2022,No,87.7,31.1,22

@@ -1,0 +1,943 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Risk Dashboard - University Retention System{% endblock %}
+
+{% block content %}
+<!-- Page Title and Header Actions -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+    <div>
+        <h2 class="fw-bold text-dark mb-1">
+            <i class="bi bi-speedometer2 text-primary me-2"></i>Academic Retention & Early Warning Dashboard
+        </h2>
+        <p class="text-muted mb-0">
+            Real-time Machine Learning surveillance predicting student attrition and academic difficulty.
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/upload" class="btn btn-outline-primary fw-semibold px-3 py-2 rounded-3">
+            <i class="bi bi-cloud-arrow-up me-1"></i> Upload Records
+        </a>
+        <button id="btnDashboardScoring" class="btn btn-brand px-3 py-2 rounded-3">
+            <i class="bi bi-lightning-charge-fill me-1"></i> Recalculate Risk Engine
+        </button>
+    </div>
+</div>
+
+<!-- Alert Banner if Query Param or Message Present -->
+{% if message %}
+<div class="alert alert-{{ alert_type or 'info' }} alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-info-circle-fill fs-5 me-2"></i>
+        <div>{{ message }}</div>
+    </div>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endif %}
+
+<!-- KPI Metric Cards Grid -->
+<div class="row g-3 mb-4">
+    <!-- Total Enrolled -->
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card card-stat h-100 p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold text-uppercase">Cohort Size</span>
+                <span class="badge bg-light text-dark rounded-pill p-1"><i class="bi bi-people-fill text-secondary"></i></span>
+            </div>
+            <h3 class="fw-bold mb-0 text-dark">{{ kpi.total_students }}</h3>
+            <span class="text-muted small mt-1">Active Profiles</span>
+        </div>
+    </div>
+
+    <!-- High Risk -->
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card card-stat h-100 p-3" style="border-left: 4px solid var(--risk-high);">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-danger small fw-semibold text-uppercase">High Risk</span>
+                <span class="badge bg-danger-subtle text-danger rounded-pill p-1"><i class="bi bi-exclamation-triangle-fill"></i></span>
+            </div>
+            <h3 class="fw-bold mb-0 text-danger">{{ kpi.high_risk_count }}</h3>
+            <span class="text-muted small mt-1">{{ kpi.high_risk_pct }}% of cohort</span>
+        </div>
+    </div>
+
+    <!-- Medium Risk -->
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card card-stat h-100 p-3" style="border-left: 4px solid var(--risk-medium);">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-warning small fw-semibold text-uppercase">Medium Risk</span>
+                <span class="badge bg-warning-subtle text-warning rounded-pill p-1"><i class="bi bi-exclamation-circle-fill"></i></span>
+            </div>
+            <h3 class="fw-bold mb-0 text-warning">{{ kpi.medium_risk_count }}</h3>
+            <span class="text-muted small mt-1">Monitoring Needed</span>
+        </div>
+    </div>
+
+    <!-- Low Risk -->
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card card-stat h-100 p-3" style="border-left: 4px solid var(--risk-low);">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-success small fw-semibold text-uppercase">Low Risk</span>
+                <span class="badge bg-success-subtle text-success rounded-pill p-1"><i class="bi bi-shield-check"></i></span>
+            </div>
+            <h3 class="fw-bold mb-0 text-success">{{ kpi.low_risk_count }}</h3>
+            <span class="text-muted small mt-1">Good Standing</span>
+        </div>
+    </div>
+
+    <!-- Average Attendance -->
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card card-stat h-100 p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold text-uppercase">Avg Attendance</span>
+                <span class="badge bg-light text-primary rounded-pill p-1"><i class="bi bi-calendar2-check-fill text-primary"></i></span>
+            </div>
+            <h3 class="fw-bold mb-0 text-dark">{{ kpi.avg_attendance }}%</h3>
+            <span class="text-muted small mt-1">Goal: &ge; 75%</span>
+        </div>
+    </div>
+
+    <!-- Average Internal Marks -->
+    <div class="col-12 col-sm-6 col-xl-2">
+        <div class="card card-stat h-100 p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-semibold text-uppercase">Avg Marks</span>
+                <span class="badge bg-light text-info rounded-pill p-1"><i class="bi bi-award-fill text-info"></i></span>
+            </div>
+            <h3 class="fw-bold mb-0 text-dark">{{ kpi.avg_internal_marks }}/100</h3>
+            <span class="text-muted small mt-1">Passing: &ge; 45</span>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics & Risk Visualizations Row -->
+<div class="row g-4 mb-4">
+    <!-- Risk Distribution Donut Chart -->
+    <div class="col-12 col-lg-4">
+        <div class="card card-stat h-100 p-4">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center justify-content-between">
+                <span>Risk Distribution</span>
+                <i class="bi bi-pie-chart text-muted"></i>
+            </h5>
+            <div class="d-flex justify-content-center align-items-center" style="height: 220px;">
+                <canvas id="riskDonutChart"></canvas>
+            </div>
+            <div class="d-flex justify-content-around text-center mt-3 pt-2 border-top">
+                <div>
+                    <span class="badge badge-risk-high d-block mb-1">High</span>
+                    <strong class="text-danger">{{ kpi.high_risk_count }}</strong>
+                </div>
+                <div>
+                    <span class="badge badge-risk-medium d-block mb-1">Medium</span>
+                    <strong class="text-warning">{{ kpi.medium_risk_count }}</strong>
+                </div>
+                <div>
+                    <span class="badge badge-risk-low d-block mb-1">Low</span>
+                    <strong class="text-success">{{ kpi.low_risk_count }}</strong>
+                </div>
+                <div>
+                    <span class="badge badge-risk-unassessed d-block mb-1">Unscored</span>
+                    <strong class="text-muted">{{ kpi.unassessed_count }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Factors Guide & Key System Drivers -->
+    <div class="col-12 col-lg-8">
+        <div class="card card-stat h-100 p-4">
+            <h5 class="fw-bold text-dark mb-3 d-flex align-items-center justify-content-between">
+                <span>Machine Learning Early Warning Indicators</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary fw-semibold px-2 py-1">Scikit-Learn Random Forest</span>
+            </h5>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="p-3 rounded-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 h-100">
+                        <div class="fw-bold text-danger mb-1 d-flex align-items-center gap-1">
+                            <i class="bi bi-calendar-x"></i> Attendance Deficit
+                        </div>
+                        <p class="small text-muted mb-2">Threshold: <strong>&lt; 70%</strong> attendance.</p>
+                        <div class="small">Chronic absenteeism is statistically the #1 precursor to academic attrition.</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 rounded-3 bg-warning bg-opacity-10 border border-warning border-opacity-25 h-100">
+                        <div class="fw-bold text-warning mb-1 d-flex align-items-center gap-1">
+                            <i class="bi bi-file-earmark-bar-graph"></i> Assessment Failure
+                        </div>
+                        <p class="small text-muted mb-2">Threshold: <strong>&lt; 45 / 100</strong> internal marks.</p>
+                        <div class="small">Flags subjects where mid-term intervention or tutoring is urgently required.</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="p-3 rounded-3 bg-info bg-opacity-10 border border-info border-opacity-25 h-100">
+                        <div class="fw-bold text-info mb-1 d-flex align-items-center gap-1">
+                            <i class="bi bi-laptop"></i> LMS Disengagement
+                        </div>
+                        <p class="small text-muted mb-2">Threshold: <strong>&lt; 15</strong> portal logins.</p>
+                        <div class="small">Digital trace data that exposes disengagement weeks before exam failures.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Action Guide -->
+            <div class="mt-4 p-3 rounded-3 bg-light border d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+                <div class="small text-muted">
+                    <i class="bi bi-shield-lock-fill text-primary me-1"></i>
+                    <strong>Automated Workflow:</strong> Ingest CSV &rarr; Run ML Risk Engine &rarr; Filter High Risk students &rarr; Trigger Advisor Intervention.
+                </div>
+                <button class="btn btn-outline-secondary btn-sm" onclick="exportTableToCSV('student_risk_report.csv')">
+                    <i class="bi bi-filetype-csv me-1"></i> Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Student Cohort Table with Dynamic Filtering -->
+<div class="card card-stat p-4">
+    <!-- Filter Bar Header -->
+    <div class="row g-3 align-items-center mb-3">
+        <div class="col-12 col-md-4">
+            <div class="input-group">
+                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Search by name, ID, or risk factor...">
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <select id="departmentFilter" class="form-select">
+                <option value="ALL">All Departments ({{ kpi.total_students }})</option>
+                {% for dept in departments %}
+                <option value="{{ dept }}">{{ dept }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-6 col-md-3">
+            <select id="riskFilter" class="form-select">
+                <option value="ALL">All Risk Levels</option>
+                <option value="High" class="text-danger fw-bold">High Risk Only</option>
+                <option value="Medium" class="text-warning fw-bold">Medium Risk Only</option>
+                <option value="Low" class="text-success fw-bold">Low Risk Only</option>
+                <option value="Unassessed">Unassessed Only</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-2 text-md-end text-muted small">
+            Showing <span id="visibleCount" class="fw-bold text-dark">{{ students|length }}</span> of {{ students|length }}
+        </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0" id="studentsTable">
+            <thead class="table-light">
+                <tr class="text-uppercase small text-muted" style="letter-spacing: 0.05em; font-size: 0.75rem;">
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Attendance %</th>
+                    <th>Internal Marks</th>
+                    <th>LMS Logins</th>
+                    <th>Risk Score</th>
+                    <th>Risk Level</th>
+                    <th>Primary Risk Driver</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if students %}
+                    {% for s in students %}
+                    <tr class="student-row"
+                        data-id="{{ s.student_id }}"
+                        data-name="{{ s.name|lower }}"
+                        data-dept="{{ s.department }}"
+                        data-risk="{{ s.risk_level }}"
+                        data-factor="{{ s.top_risk_factor|lower }}">
+                        
+                        <!-- Student ID -->
+                        <td class="fw-bold text-dark">
+                            <span class="badge bg-light text-primary border font-monospace">{{ s.student_id }}</span>
+                        </td>
+                        
+                        <!-- Name & Scholarship Status -->
+                        <td>
+                            <div class="fw-bold text-dark">{{ s.name }}</div>
+                            <div class="text-muted small">
+                                Class of {{ s.enrollment_year }}
+                                {% if s.scholarship_status == 'Yes' %}
+                                    <span class="badge bg-info-subtle text-info ms-1">Scholarship</span>
+                                {% endif %}
+                            </div>
+                        </td>
+
+                        <!-- Department -->
+                        <td>
+                            <span class="text-secondary small fw-medium">{{ s.department }}</span>
+                        </td>
+
+                        <!-- Attendance with Visual Indicator -->
+                        <td>
+                            {% if s.attendance_pct is not none %}
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold {% if s.attendance_pct < 70 %}text-danger{% elif s.attendance_pct < 80 %}text-warning{% else %}text-success{% endif %}">
+                                        {{ "%.1f"|format(s.attendance_pct) }}%
+                                    </span>
+                                </div>
+                                <div class="progress mt-1" style="height: 4px; width: 80px;">
+                                    <div class="progress-bar {% if s.attendance_pct < 70 %}bg-danger{% elif s.attendance_pct < 80 %}bg-warning{% else %}bg-success{% endif %}"
+                                         role="progressbar" style="width: {{ s.attendance_pct }}%"></div>
+                                </div>
+                            {% else %}
+                                <span class="text-muted">&mdash;</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Internal Marks -->
+                        <td>
+                            {% if s.internal_marks is not none %}
+                                <span class="fw-semibold {% if s.internal_marks < 45 %}text-danger{% elif s.internal_marks < 60 %}text-warning{% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(s.internal_marks) }}
+                                </span>
+                                <span class="text-muted small">/100</span>
+                            {% else %}
+                                <span class="text-muted">&mdash;</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- LMS Logins -->
+                        <td>
+                            {% if s.lms_logins is not none %}
+                                <span class="badge bg-light text-dark border">
+                                    <i class="bi bi-box-arrow-in-right text-muted me-1"></i>{{ s.lms_logins }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted">&mdash;</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Risk Score Gauge -->
+                        <td>
+                            {% if s.risk_score is not none %}
+                                <div class="font-monospace fw-bold {% if s.risk_level == 'High' %}text-danger{% elif s.risk_level == 'Medium' %}text-warning{% else %}text-success{% endif %}">
+                                    {{ "%.1f"|format(s.risk_score * 100) }}%
+                                </div>
+                            {% else %}
+                                <span class="text-muted small">N/A</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Risk Level Badge -->
+                        <td>
+                            {% if s.risk_level == 'High' %}
+                                <span class="badge-risk-high"><i class="bi bi-shield-x me-1"></i>High Risk</span>
+                            {% elif s.risk_level == 'Medium' %}
+                                <span class="badge-risk-medium"><i class="bi bi-shield-exclamation me-1"></i>Medium Risk</span>
+                            {% elif s.risk_level == 'Low' %}
+                                <span class="badge-risk-low"><i class="bi bi-shield-check me-1"></i>Low Risk</span>
+                            {% else %}
+                                <span class="badge-risk-unassessed"><i class="bi bi-clock me-1"></i>Unassessed</span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Top Risk Driver -->
+                        <td>
+                            <span class="small {% if s.risk_level == 'High' %}text-danger fw-semibold{% elif s.risk_level == 'Medium' %}text-warning fw-semibold{% else %}text-muted{% endif %}">
+                                {{ s.top_risk_factor or 'Pending Analysis' }}
+                            </span>
+                        </td>
+
+                        <!-- Action Button -->
+                        <td class="text-end text-nowrap">
+                            {% if s.risk_level == 'High' %}
+                                <button class="btn btn-sm btn-danger rounded-pill px-2 py-1 me-1 shadow-sm"
+                                        title="Trigger AI Advisor LangGraph & Handbook RAG"
+                                        onclick="openRecoveryPlanModal('{{ s.student_id }}', '{{ s.name|escape }}', '{{ s.department|escape }}', '{{ s.risk_level }}', '{{ s.risk_score or 0 }}')">
+                                    <i class="bi bi-robot me-1"></i> AI Recovery Plan
+                                </button>
+                            {% elif s.has_intervention %}
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-2 py-1 me-1"
+                                        title="View Previous AI Intervention Plan"
+                                        onclick="openRecoveryPlanModal('{{ s.student_id }}', '{{ s.name|escape }}', '{{ s.department|escape }}', '{{ s.risk_level }}', '{{ s.risk_score or 0 }}', true)">
+                                    <i class="bi bi-file-earmark-medical me-1"></i> View Plan
+                                </button>
+                            {% endif %}
+                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#studentModal"
+                                    onclick="openStudentModal('{{ s.student_id }}', '{{ s.name|escape }}', '{{ s.department|escape }}', '{{ s.enrollment_year }}', '{{ s.scholarship_status }}', '{{ s.attendance_pct or 0 }}', '{{ s.internal_marks or 0 }}', '{{ s.lms_logins or 0 }}', '{{ s.risk_level }}', '{{ s.risk_score or 0 }}', '{{ s.top_risk_factor|escape }}')">
+                                <i class="bi bi-eye"></i> Details
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="10" class="text-center py-5">
+                            <div class="text-muted mb-3">
+                                <i class="bi bi-folder2-open display-4 text-secondary"></i>
+                            </div>
+                            <h5 class="fw-bold text-dark">No Student Records Found</h5>
+                            <p class="text-muted mb-3">The database has not been populated with student academic records yet.</p>
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="/upload" class="btn btn-primary btn-sm"><i class="bi bi-cloud-arrow-up me-1"></i> Upload CSV</a>
+                                <a href="/api/seed-sample" class="btn btn-outline-primary btn-sm"><i class="bi bi-magic me-1"></i> Quick Auto-Seed</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Student Detail Modal -->
+<div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header bg-light border-bottom">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="badge bg-primary fs-6" id="modalStudentId">STU0000</div>
+                    <h5 class="modal-title fw-bold text-dark mb-0" id="modalStudentName">Student Profile</h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="text-muted small">Department</label>
+                        <div class="fw-bold text-dark" id="modalDepartment">-</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-muted small">Enrollment Cohort</label>
+                        <div class="fw-bold text-dark" id="modalCohort">-</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="text-muted small">Scholarship</label>
+                        <div class="fw-bold text-dark" id="modalScholarship">-</div>
+                    </div>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 mb-4">
+                    <h6 class="fw-bold text-dark mb-3">Academic Performance Indicators</h6>
+                    <div class="row g-3 text-center">
+                        <div class="col-4">
+                            <div class="small text-muted mb-1">Attendance</div>
+                            <h4 class="fw-bold mb-0" id="modalAttendance">-</h4>
+                        </div>
+                        <div class="col-4">
+                            <div class="small text-muted mb-1">Internal Marks</div>
+                            <h4 class="fw-bold mb-0" id="modalMarks">-</h4>
+                        </div>
+                        <div class="col-4">
+                            <div class="small text-muted mb-1">LMS Logins</div>
+                            <h4 class="fw-bold mb-0" id="modalLogins">-</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-3 border mb-3" id="modalRiskCard">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-dark">AI Risk Assessment</span>
+                        <span id="modalRiskBadge" class="badge">Low Risk</span>
+                    </div>
+                    <p class="mb-1 text-muted small"><strong>Primary Risk Driver:</strong> <span id="modalRiskFactor" class="text-dark">-</span></p>
+                    <p class="mb-0 text-muted small"><strong>Risk Probability:</strong> <span id="modalRiskProbability" class="font-monospace fw-bold">-</span></p>
+                </div>
+
+                <div class="alert alert-info border-0 rounded-3 mb-0">
+                    <div class="fw-bold mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Early Intervention Guidance:</div>
+                    <div class="small" id="modalActionAdvice">Regular monitoring advised. Keep encouraging attendance in weekly tutorial sessions.</div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light border-top">
+                <button type="button" class="btn btn-secondary rounded-3 px-3" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary rounded-3 px-3" onclick="showNotification('Academic advisor alert logged.', true); bootstrap.Modal.getInstance(document.getElementById('studentModal')).hide();">
+                    <i class="bi bi-envelope-paper-heart me-1"></i> Notify Academic Advisor
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Recovery Plan Modal (Phase 3) -->
+<div class="modal fade" id="recoveryPlanModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+            <div class="modal-header text-white border-bottom-0 py-3" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-danger p-2 text-white d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                        <i class="bi bi-robot fs-4"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <h5 class="modal-title fw-bold text-white mb-0" id="planModalStudentName">Student Name</h5>
+                            <span class="badge bg-light text-primary font-monospace" id="planModalStudentId">STU0000</span>
+                            <span class="badge bg-danger" id="planModalRiskBadge">High Risk</span>
+                        </div>
+                        <div class="text-white-50 small mt-1" id="planModalDept">Department of Engineering</div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                <!-- Loading State -->
+                <div id="planLoadingView" class="text-center py-5">
+                    <div class="spinner-border text-danger mb-3" style="width: 3rem; height: 3rem;" role="status"></div>
+                    <h5 class="fw-bold text-dark">LangGraph AI Advisor Agent is Executing...</h5>
+                    <p class="text-muted small mb-0">
+                        Querying <strong>University Handbook ChromaDB RAG</strong>, evaluating risk vectors, and synthesizing a 3-step structured recovery plan.
+                    </p>
+                </div>
+
+                <!-- Error State -->
+                <div id="planErrorView" class="d-none text-center py-5">
+                    <i class="bi bi-exclamation-octagon text-danger display-4 mb-3"></i>
+                    <h5 class="fw-bold text-danger">Agent Execution Failed</h5>
+                    <p class="text-muted small" id="planErrorMessage">An error occurred while generating the recovery plan.</p>
+                    <button class="btn btn-outline-primary btn-sm" onclick="regenerateCurrentPlan()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Try Again
+                    </button>
+                </div>
+
+                <!-- Content State -->
+                <div id="planContentView" class="d-none">
+                    <!-- Engine & Persistence Banner -->
+                    <div class="d-flex flex-wrap justify-content-between align-items-center bg-light p-3 rounded-3 mb-4 gap-2 border">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary-subtle text-primary border px-2 py-1">
+                                <i class="bi bi-cpu me-1"></i> Engine: <span id="planEngineLabel">Local Fallback Agent + ChromaDB RAG</span>
+                            </span>
+                            <span class="badge bg-success-subtle text-success border px-2 py-1">
+                                <i class="bi bi-database-check me-1"></i> Database Record: <span id="planInterventionId">#0</span>
+                            </span>
+                        </div>
+                        <span class="text-muted small" id="planTimestamp">Saved to Database</span>
+                    </div>
+
+                    <!-- Diagnostic Summary -->
+                    <div class="card border-0 bg-primary-subtle p-3 rounded-3 mb-4">
+                        <div class="fw-bold text-primary mb-1">
+                            <i class="bi bi-file-earmark-person me-1"></i> Diagnostic Assessment:
+                        </div>
+                        <p class="mb-0 text-dark small" id="planSummaryText">-</p>
+                    </div>
+
+                    <!-- 3-Step Recovery Plan -->
+                    <h6 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-signpost-split text-danger me-2"></i>Structured 3-Step Academic Recovery Plan
+                    </h6>
+                    <div class="row g-3 mb-4">
+                        <!-- Step 1 -->
+                        <div class="col-12 col-md-4">
+                            <div class="card h-100 border p-3 rounded-3" style="border-top: 4px solid #ef4444 !important;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-danger-subtle text-danger fw-bold">Step 1: Immediate</span>
+                                    <span class="badge bg-light text-muted small" id="planStep1Timeline">Days 1 - 7</span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-2" id="planStep1Title">Action Title</h6>
+                                <p class="text-muted small mb-3 flex-grow-1" id="planStep1Action">Action text</p>
+                                <div class="bg-light p-2 rounded small text-secondary border">
+                                    <i class="bi bi-book-half me-1"></i> <strong class="small">Policy:</strong> <span id="planStep1Policy" class="small">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="col-12 col-md-4">
+                            <div class="card h-100 border p-3 rounded-3" style="border-top: 4px solid #f59e0b !important;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-warning-subtle text-warning fw-bold">Step 2: Coursework</span>
+                                    <span class="badge bg-light text-muted small" id="planStep2Timeline">Weeks 2 - 5</span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-2" id="planStep2Title">Action Title</h6>
+                                <p class="text-muted small mb-3 flex-grow-1" id="planStep2Action">Action text</p>
+                                <div class="bg-light p-2 rounded small text-secondary border">
+                                    <i class="bi bi-book-half me-1"></i> <strong class="small">Policy:</strong> <span id="planStep2Policy" class="small">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="col-12 col-md-4">
+                            <div class="card h-100 border p-3 rounded-3" style="border-top: 4px solid #10b981 !important;">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-success-subtle text-success fw-bold">Step 3: Milestone</span>
+                                    <span class="badge bg-light text-muted small" id="planStep3Timeline">Weeks 6 - 8</span>
+                                </div>
+                                <h6 class="fw-bold text-dark mb-2" id="planStep3Title">Action Title</h6>
+                                <p class="text-muted small mb-3 flex-grow-1" id="planStep3Action">Action text</p>
+                                <div class="bg-light p-2 rounded small text-secondary border">
+                                    <i class="bi bi-book-half me-1"></i> <strong class="small">Policy:</strong> <span id="planStep3Policy" class="small">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cited Handbook Policies Accordion -->
+                    <div class="card border p-3 rounded-3 mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="fw-bold text-dark mb-0">
+                                <i class="bi bi-journal-bookmark text-primary me-2"></i>Retrieved University Handbook Regulations (ChromaDB RAG)
+                            </h6>
+                            <button class="btn btn-sm btn-link text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#policiesCollapse">
+                                View Policy Excerpts <i class="bi bi-chevron-down ms-1"></i>
+                            </button>
+                        </div>
+                        <div class="collapse mt-3" id="policiesCollapse">
+                            <div id="planPoliciesList" class="d-flex flex-column gap-2">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Polite Email Draft to Student -->
+                    <div class="card border p-3 rounded-3">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0">
+                                    <i class="bi bi-envelope-check text-success me-2"></i>Personalized Advisor Email Draft
+                                </h6>
+                                <span class="text-muted small">Ready to copy and dispatch via SIS or institutional email</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="btnCopyEmail" onclick="copyEmailDraft()">
+                                <i class="bi bi-clipboard me-1"></i> Copy Email
+                            </button>
+                        </div>
+                        <div class="mb-2">
+                            <label class="text-muted small fw-bold">Subject Line:</label>
+                            <input type="text" id="planEmailSubject" class="form-control form-control-sm bg-light" readonly>
+                        </div>
+                        <div>
+                            <label class="text-muted small fw-bold">Message Body:</label>
+                            <textarea id="planEmailBody" class="form-control form-control-sm bg-light font-monospace" rows="8" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer bg-light border-top">
+                <button type="button" class="btn btn-secondary rounded-3 px-3" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-danger rounded-3 px-3" onclick="regenerateCurrentPlan()">
+                    <i class="bi bi-arrow-repeat me-1"></i> Regenerate AI Plan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // -------------------------------------------------------------
+    // Chart.js Risk Distribution Donut
+    // -------------------------------------------------------------
+    const highCount = {{ kpi.high_risk_count }};
+    const medCount = {{ kpi.medium_risk_count }};
+    const lowCount = {{ kpi.low_risk_count }};
+    const unassessedCount = {{ kpi.unassessed_count }};
+
+    const ctx = document.getElementById('riskDonutChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['High Risk', 'Medium Risk', 'Low Risk', 'Unassessed'],
+            datasets: [{
+                data: [highCount, medCount, lowCount, unassessedCount],
+                backgroundColor: ['#dc2626', '#d97706', '#059669', '#94a3b8'],
+                borderWidth: 2,
+                borderColor: '#ffffff',
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            cutout: '72%'
+        }
+    });
+
+    // -------------------------------------------------------------
+    // Dynamic Filter & Search Engine
+    // -------------------------------------------------------------
+    const searchInput = document.getElementById('searchInput');
+    const deptFilter = document.getElementById('departmentFilter');
+    const riskFilter = document.getElementById('riskFilter');
+    const tableRows = document.querySelectorAll('.student-row');
+    const visibleCountEl = document.getElementById('visibleCount');
+
+    function applyFilters() {
+        const query = searchInput.value.toLowerCase().trim();
+        const selectedDept = deptFilter.value;
+        const selectedRisk = riskFilter.value;
+        let visibleCount = 0;
+
+        tableRows.forEach(row => {
+            const id = row.getAttribute('data-id').toLowerCase();
+            const name = row.getAttribute('data-name');
+            const dept = row.getAttribute('data-dept');
+            const risk = row.getAttribute('data-risk');
+            const factor = row.getAttribute('data-factor');
+
+            const matchesQuery = !query || id.includes(query) || name.includes(query) || factor.includes(query);
+            const matchesDept = (selectedDept === 'ALL') || (dept === selectedDept);
+            const matchesRisk = (selectedRisk === 'ALL') || (risk === selectedRisk);
+
+            if (matchesQuery && matchesDept && matchesRisk) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        visibleCountEl.textContent = visibleCount;
+    }
+
+    searchInput?.addEventListener('input', applyFilters);
+    deptFilter?.addEventListener('change', applyFilters);
+    riskFilter?.addEventListener('change', applyFilters);
+
+    // Dashboard Scoring Button connects to same trigger
+    document.getElementById('btnDashboardScoring')?.addEventListener('click', function() {
+        document.getElementById('btnRunScoring').click();
+    });
+
+    // -------------------------------------------------------------
+    // Modal Population Function
+    // -------------------------------------------------------------
+    function openStudentModal(id, name, dept, cohort, scholarship, att, marks, logins, riskLevel, riskScore, riskFactor) {
+        document.getElementById('modalStudentId').textContent = id;
+        document.getElementById('modalStudentName').textContent = name;
+        document.getElementById('modalDepartment').textContent = dept;
+        document.getElementById('modalCohort').textContent = 'Class of ' + cohort;
+        document.getElementById('modalScholarship').textContent = scholarship === 'Yes' ? 'Active Scholar' : 'Regular';
+
+        const attVal = parseFloat(att);
+        const marksVal = parseFloat(marks);
+
+        const attEl = document.getElementById('modalAttendance');
+        attEl.textContent = attVal.toFixed(1) + '%';
+        attEl.className = 'fw-bold mb-0 ' + (attVal < 70 ? 'text-danger' : (attVal < 80 ? 'text-warning' : 'text-success'));
+
+        const marksEl = document.getElementById('modalMarks');
+        marksEl.textContent = marksVal.toFixed(1) + ' / 100';
+        marksEl.className = 'fw-bold mb-0 ' + (marksVal < 45 ? 'text-danger' : (marksVal < 60 ? 'text-warning' : 'text-success'));
+
+        document.getElementById('modalLogins').textContent = logins + ' logins';
+
+        const badgeEl = document.getElementById('modalRiskBadge');
+        const probVal = (parseFloat(riskScore) * 100).toFixed(1);
+        document.getElementById('modalRiskProbability').textContent = probVal + '% probability';
+        document.getElementById('modalRiskFactor').textContent = riskFactor || 'Stable';
+
+        const adviceEl = document.getElementById('modalActionAdvice');
+
+        if (riskLevel === 'High') {
+            badgeEl.className = 'badge-risk-high';
+            badgeEl.textContent = 'High Risk';
+            adviceEl.innerHTML = `<strong>Immediate Intervention Required:</strong> Coordinate with department advisor for 1-on-1 counseling. Student has triggered critical policy thresholds in ${riskFactor}.`;
+        } else if (riskLevel === 'Medium') {
+            badgeEl.className = 'badge-risk-medium';
+            badgeEl.textContent = 'Medium Risk';
+            adviceEl.innerHTML = `<strong>Advisory Check-in:</strong> Send automated nudge via LMS portal. Encourage attendance at peer tutoring labs before midterms.`;
+        } else {
+            badgeEl.className = 'badge-risk-low';
+            badgeEl.textContent = 'Low Risk';
+            adviceEl.innerHTML = `<strong>Satisfactory Standing:</strong> Student exhibits solid metrics. Continue normal semester progression.`;
+        }
+    }
+
+    // Export CSV Helper
+    function exportTableToCSV(filename) {
+        let csv = [];
+        const rows = document.querySelectorAll("#studentsTable tr");
+        for (let i = 0; i < rows.length; i++) {
+            if (rows[i].style.display === 'none') continue;
+            let row = [], cols = rows[i].querySelectorAll("td, th");
+            for (let j = 0; j < cols.length - 1; j++) {
+                let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, " ").trim();
+                data = data.replace(/"/g, '""');
+                row.push('"' + data + '"');
+            }
+            csv.push(row.join(","));
+        }
+        const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+        const downloadLink = document.createElement("a");
+        downloadLink.download = filename;
+        downloadLink.href = window.URL.createObjectURL(csvFile);
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+    }
+
+    // -------------------------------------------------------------
+    // Phase 3: AI Advisor Agent LangGraph Integration
+    // -------------------------------------------------------------
+    let currentStudentId = null;
+    let currentStudentName = null;
+    let currentStudentDept = null;
+    let currentStudentRisk = null;
+
+    async function openRecoveryPlanModal(studentId, name, dept, riskLevel, riskScore, viewOnly = false) {
+        currentStudentId = studentId;
+        currentStudentName = name;
+        currentStudentDept = dept;
+        currentStudentRisk = riskLevel;
+
+        const modalEl = document.getElementById('recoveryPlanModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+
+        document.getElementById('planModalStudentName').textContent = name;
+        document.getElementById('planModalStudentId').textContent = studentId;
+        document.getElementById('planModalDept').textContent = dept;
+        document.getElementById('planModalRiskBadge').textContent = riskLevel + ' Risk';
+
+        // Switch to loading view
+        document.getElementById('planLoadingView').classList.remove('d-none');
+        document.getElementById('planContentView').classList.add('d-none');
+        document.getElementById('planErrorView').classList.add('d-none');
+
+        modal.show();
+
+        try {
+            let res;
+            if (viewOnly) {
+                // Try fetching latest existing plan
+                res = await fetch(`/api/students/${studentId}/latest-plan`);
+                if (res.ok) {
+                    const data = await res.json();
+                    renderPlanData({
+                        status: 'success',
+                        student_id: studentId,
+                        intervention_id: data.intervention_id,
+                        used_llm_mode: data.plan_data.llm_engine || 'Database Record',
+                        recovery_plan: {
+                            summary: data.plan_data.summary,
+                            step_1: data.plan_data.steps?.[0] || {},
+                            step_2: data.plan_data.steps?.[1] || {},
+                            step_3: data.plan_data.steps?.[2] || {},
+                        },
+                        email_draft: data.plan_data.email_draft || {},
+                        retrieved_policies: data.plan_data.policies_retrieved || [],
+                    });
+                    return;
+                }
+            }
+
+            // Generate fresh plan via LangGraph Agent
+            res = await fetch(`/api/students/${studentId}/generate-plan`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (!res.ok) {
+                const errJson = await res.json().catch(() => ({}));
+                throw new Error(errJson.detail || 'Agent execution failed');
+            }
+
+            const data = await res.json();
+            renderPlanData(data);
+
+        } catch (err) {
+            console.error('Error generating recovery plan:', err);
+            document.getElementById('planLoadingView').classList.add('d-none');
+            document.getElementById('planContentView').classList.add('d-none');
+            document.getElementById('planErrorView').classList.remove('d-none');
+            document.getElementById('planErrorMessage').textContent = err.message || 'Unknown error occurred.';
+        }
+    }
+
+    function renderPlanData(data) {
+        document.getElementById('planLoadingView').classList.add('d-none');
+        document.getElementById('planErrorView').classList.add('d-none');
+        document.getElementById('planContentView').classList.remove('d-none');
+
+        const plan = data.recovery_plan || {};
+        const email = data.email_draft || {};
+        const policies = data.retrieved_policies || [];
+
+        // Engine & Metadata
+        const engineLabel = data.used_llm_mode === 'ollama' 
+            ? 'Local Ollama (llama3) + ChromaDB RAG'
+            : 'Resilient Local Fallback Engine + ChromaDB RAG';
+        document.getElementById('planEngineLabel').textContent = engineLabel;
+        document.getElementById('planInterventionId').textContent = '#' + (data.intervention_id || 'Active');
+        document.getElementById('planTimestamp').textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Summary
+        document.getElementById('planSummaryText').textContent = plan.summary || 'Summary unavailable.';
+
+        // Step 1
+        const s1 = plan.step_1 || {};
+        document.getElementById('planStep1Title').textContent = s1.title || 'Immediate Intervention';
+        document.getElementById('planStep1Action').textContent = s1.action || '-';
+        document.getElementById('planStep1Timeline').textContent = s1.timeline || 'Weeks 1-2';
+        document.getElementById('planStep1Policy').textContent = s1.policy_reference || 'Apex Academic Policy';
+
+        // Step 2
+        const s2 = plan.step_2 || {};
+        document.getElementById('planStep2Title').textContent = s2.title || 'Coursework & LMS Engagement';
+        document.getElementById('planStep2Action').textContent = s2.action || '-';
+        document.getElementById('planStep2Timeline').textContent = s2.timeline || 'Weeks 2-5';
+        document.getElementById('planStep2Policy').textContent = s2.policy_reference || 'Continuous Assessment Directives';
+
+        // Step 3
+        const s3 = plan.step_3 || {};
+        document.getElementById('planStep3Title').textContent = s3.title || 'Milestone & Good Standing';
+        document.getElementById('planStep3Action').textContent = s3.action || '-';
+        document.getElementById('planStep3Timeline').textContent = s3.timeline || 'Weeks 6-8';
+        document.getElementById('planStep3Policy').textContent = s3.policy_reference || 'Probation & Clearance Protocol';
+
+        // Policies List
+        const policiesContainer = document.getElementById('planPoliciesList');
+        policiesContainer.innerHTML = '';
+        if (policies.length > 0) {
+            policies.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.className = 'p-3 bg-light rounded border text-start';
+                item.innerHTML = `
+                    <div class="fw-bold text-dark small mb-1">
+                        <span class="badge bg-secondary me-1">Clause ${idx + 1}</span> ${p.title || p.section}
+                    </div>
+                    <div class="small text-muted font-monospace">${p.text ? p.text.substring(0, 220) + '...' : (p.section || '')}</div>
+                `;
+                policiesContainer.appendChild(item);
+            });
+        } else {
+            policiesContainer.innerHTML = '<div class="text-muted small">General academic recovery protocols applied.</div>';
+        }
+
+        // Email Draft
+        document.getElementById('planEmailSubject').value = email.subject || 'Academic Advising Consultation';
+        document.getElementById('planEmailBody').value = email.body || '';
+    }
+
+    function copyEmailDraft() {
+        const subject = document.getElementById('planEmailSubject').value;
+        const body = document.getElementById('planEmailBody').value;
+        const fullEmail = `Subject: ${subject}\n\n${body}`;
+
+        navigator.clipboard.writeText(fullEmail).then(() => {
+            const btn = document.getElementById('btnCopyEmail');
+            const originalHtml = btn.innerHTML;
+            btn.className = 'btn btn-sm btn-success rounded-pill px-3';
+            btn.innerHTML = '<i class="bi bi-check2 me-1"></i> Copied to Clipboard!';
+            setTimeout(() => {
+                btn.className = 'btn btn-sm btn-outline-primary rounded-pill px-3';
+                btn.innerHTML = originalHtml;
+            }, 2500);
+        }).catch(err => {
+            alert('Failed to copy to clipboard.');
+        });
+    }
+
+    function regenerateCurrentPlan() {
+        if (currentStudentId) {
+            openRecoveryPlanModal(currentStudentId, currentStudentName, currentStudentDept, currentStudentRisk, 0, false);
+        }
+    }
+</script>
+{% endblock %}
+

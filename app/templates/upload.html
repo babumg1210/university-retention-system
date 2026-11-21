@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Student Academic Data - University Retention System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <!-- Back Navigation -->
+        <div class="mb-3">
+            <a href="/" class="text-decoration-none text-muted small fw-semibold">
+                <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Main Card -->
+        <div class="card card-stat p-4 p-md-5 mb-4">
+            <div class="text-center mb-4">
+                <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-circle d-inline-flex mb-3">
+                    <i class="bi bi-cloud-arrow-up-fill fs-1"></i>
+                </div>
+                <h3 class="fw-bold text-dark mb-2">Ingest Student Academic Records</h3>
+                <p class="text-muted">
+                    Upload a standard institutional CSV file containing student demographics, attendance records, internal assessment scores, and LMS portal activity.
+                </p>
+            </div>
+
+            <!-- Upload Form -->
+            <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
+                <div class="mb-4">
+                    <label for="csvFile" class="form-label fw-bold text-dark">Select Academic CSV File</label>
+                    <div class="input-group input-group-lg">
+                        <input type="file" class="form-control" id="csvFile" name="file" accept=".csv" required>
+                        <button class="btn btn-brand px-4 fw-semibold" type="submit" id="submitBtn">
+                            <i class="bi bi-upload me-1"></i> Upload & Process
+                        </button>
+                    </div>
+                    <div class="form-text mt-2">
+                        Supported formats: <strong>.csv</strong> (Comma Separated Values). Maximum file size: 25MB.
+                    </div>
+                </div>
+            </form>
+
+            <!-- Sample Download Box -->
+            <div class="alert alert-light border rounded-3 p-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-filetype-csv text-primary fs-3"></i>
+                    <div>
+                        <div class="fw-bold text-dark">Need a properly formatted template?</div>
+                        <div class="small text-muted">Download our verified 200-student sample CSV dataset.</div>
+                    </div>
+                </div>
+                <a href="/download-sample" class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-semibold">
+                    <i class="bi bi-download me-1"></i> Download Template
+                </a>
+            </div>
+        </div>
+
+        <!-- Column Specifications Reference Table -->
+        <div class="card card-stat p-4">
+            <h5 class="fw-bold text-dark mb-3">
+                <i class="bi bi-table text-primary me-2"></i>Required CSV Column Specification
+            </h5>
+            <p class="text-muted small mb-3">
+                Your uploaded CSV header row must contain the following columns (order-independent, case-insensitive):
+            </p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm small align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Data Type</th>
+                            <th>Sample Value</th>
+                            <th>Rules & Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>student_id</code></td>
+                            <td>String</td>
+                            <td><code>STU1001</code></td>
+                            <td>Unique university identifier. Used for clean database upserts.</td>
+                        </tr>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td>String</td>
+                            <td><code>Sarah Connor</code></td>
+                            <td>Full name of the student.</td>
+                        </tr>
+                        <tr>
+                            <td><code>department</code></td>
+                            <td>String</td>
+                            <td><code>Computer Science & Engineering</code></td>
+                            <td>Academic major or department name.</td>
+                        </tr>
+                        <tr>
+                            <td><code>enrollment_year</code></td>
+                            <td>Integer</td>
+                            <td><code>2023</code></td>
+                            <td>Matriculation cohort year (e.g., 2021-2024).</td>
+                        </tr>
+                        <tr>
+                            <td><code>scholarship_status</code></td>
+                            <td>String</td>
+                            <td><code>Yes</code> / <code>No</code></td>
+                            <td>Indicates whether student receives financial aid.</td>
+                        </tr>
+                        <tr>
+                            <td><code>attendance_pct</code></td>
+                            <td>Float</td>
+                            <td><code>68.5</code></td>
+                            <td>Attendance percentage (0.0 - 100.0). Threshold: &lt; 70% is high risk.</td>
+                        </tr>
+                        <tr>
+                            <td><code>internal_marks</code></td>
+                            <td>Float</td>
+                            <td><code>42.0</code></td>
+                            <td>Cumulative internal score (0.0 - 100.0). Threshold: &lt; 45 is high risk.</td>
+                        </tr>
+                        <tr>
+                            <td><code>lms_logins</code></td>
+                            <td>Integer</td>
+                            <td><code>12</code></td>
+                            <td>Semester logins to Learning Management System portal.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.getElementById('uploadForm')?.addEventListener('submit', function() {
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Ingesting...`;
+    });
+</script>
+{% endblock %}
+
